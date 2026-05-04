@@ -4,10 +4,10 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { registerOAuthRoutes } from "../_core/oauth.js"; // Ajusta la extensión a .js para la compilación
-import { registerStorageProxy } from "../_core/storageProxy.js";
+import { registerOAuthRoutes } from "./oauth.js"; 
+import { registerStorageProxy } from "./storageProxy.js";
 import { appRouter } from "../routers.js";
-import { createContext } from "../_core/context.js";
+import { createContext } from "./context.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const _dirname = path.dirname(_filename);
@@ -17,11 +17,11 @@ const port = process.env.PORT || 10000;
 
 app.use(express.json());
 
-// Registra tus utilidades originales del servidor
+// 1. Funciones originales del servidor
 registerOAuthRoutes(app);
 registerStorageProxy(app);
 
-// Conectar las rutas de tRPC
+// 2. Conectar las rutas de tRPC
 app.use(
   "/api/trpc",
   createExpressMiddleware({
@@ -30,7 +30,7 @@ app.use(
   })
 );
 
-// Servir archivos estáticos del frontend en producción
+// 3. Servir los archivos del frontend de Vite en producción
 // Salimos de '_core' y 'server' para llegar a 'client/dist'
 const clientDistPath = path.resolve(__dirname, "../../client/dist");
 const fallbackPath = path.resolve(process.cwd(), "client/dist");
@@ -38,7 +38,7 @@ const fallbackPath = path.resolve(process.cwd(), "client/dist");
 app.use(express.static(clientDistPath));
 app.use(express.static(fallbackPath));
 
-// Cualquier otra ruta entrega el index.html de la interfaz
+// 4. Cualquier otra ruta entrega el index.html
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(clientDistPath, "index.html"), (err) => {
     if (err) {
