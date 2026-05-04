@@ -4,7 +4,7 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { registerOAuthRoutes } from "./oauth.js"; 
+import { registerOAuthRoutes } from "./oauth.js";
 import { registerStorageProxy } from "./storageProxy.js";
 import { appRouter } from "../routers.js";
 import { createContext } from "./context.js";
@@ -17,7 +17,7 @@ const port = process.env.PORT || 10000;
 
 app.use(express.json());
 
-// 1. Funciones originales del servidor
+// 1. Registrar rutas originales del backend
 registerOAuthRoutes(app);
 registerStorageProxy(app);
 
@@ -30,19 +30,17 @@ app.use(
   })
 );
 
-// 3. Servir los archivos del frontend de Vite en producción
-// Salimos de '_core' y 'server' para llegar a 'client/dist'
-const clientDistPath = path.resolve(__dirname, "../../client/dist");
-const fallbackPath = path.resolve(process.cwd(), "client/dist");
-
+// 3. Servir el frontend compilado en producción
+// Buscamos la carpeta dist del cliente desde la raíz del proyecto
+const clientDistPath = path.resolve(process.cwd(), "client/dist");
 app.use(express.static(clientDistPath));
-app.use(express.static(fallbackPath));
 
-// 4. Cualquier otra ruta entrega el index.html
+// Cualquier otra ruta que no sea de la API entrega el index.html de Vite
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(clientDistPath, "index.html"), (err) => {
     if (err) {
-      res.sendFile(path.resolve(fallbackPath, "index.html"));
+      // Si falla en producción, enviamos un mensaje simple de fallback
+      res.status(404).send("Frontend dist folder not found. Please check your build process.");
     }
   });
 });
