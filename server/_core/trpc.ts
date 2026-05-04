@@ -13,18 +13,21 @@ export const publicProcedure = t.procedure;
 const requireUser = t.middleware(async opts => {
   const { ctx, next } = opts;
 
-  if (!ctx.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
-  }
+  // Simulamos un usuario administrador para saltar la validación
+  const mockUser = {
+    id: "user_admin",
+    name: "Administrador",
+    email: "admin@webdisponible.com",
+    isAdmin: true
+  };
 
   return next({
     ctx: {
       ...ctx,
-      user: ctx.user,
+      user: mockUser,
     },
   });
 });
-
 export const protectedProcedure = t.procedure.use(requireUser);
 
 export const adminProcedure = t.procedure.use(
