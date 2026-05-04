@@ -1,0 +1,1 @@
+ALTER TABLE `visual_bibles` MODIFY COLUMN `style` varchar(1024) NOT NULL;

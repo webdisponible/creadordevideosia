@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1777840726052,
+      "tag": "0000_oval_molten_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1777840971980,
+      "tag": "0001_melodic_stone_men",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1777842847654,
+      "tag": "0002_spooky_spacker_dave",
+      "breakpoints": true
+    }
+  ]
+}
